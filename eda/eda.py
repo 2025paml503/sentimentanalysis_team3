@@ -10,9 +10,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-DATA_PATH = Path(__file__).resolve().parent / "data" / "raw" / "amazon_reviews.txt"
-OUTPUT_PATH = Path(__file__).resolve().parent / "eda_summary.txt"
-PLOT_PATH = Path(__file__).resolve().parent / "sentiment_distribution.png"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_PATH = PROJECT_ROOT / "data" / "raw" / "amazon_reviews.txt"
+OUTPUT_PATH = PROJECT_ROOT / "eda_summary.txt"
+PLOT_PATH = PROJECT_ROOT / "sentiment_distribution.png"
 
 
 def load_reviews(path: Path) -> pd.DataFrame:
