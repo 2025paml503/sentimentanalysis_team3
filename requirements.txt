@@ -2,6 +2,7 @@
 # Pinned versions. Reproducibility requires pinned dependencies: an
 # unpinned requirements file means "the same code" can produce a different
 # model six months from now.
+# python 3.13.11
 
 # Install: pip install -r requirements.txt
 
