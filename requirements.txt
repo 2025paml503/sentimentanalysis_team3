@@ -4,8 +4,27 @@
 # model six months from now.
 
 # Install: pip install -r requirements.txt
-pandas
-scikit-learn
+
+# -- Week 1 : data pipeline, validation, feature store
+pandas==2.3.3
+numpy==2.5.2
+pandera==0.32.1
+
+# -- Week 2 : modelling + experiment tracking
+scikit-learn==1.9.0
+scipy==1.18.1
+joblib==1.5.3
+mlflow==3.15.1
+
+# -- Week 3: serving
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.4
+
+# -- UI + traffic simulation
+streamlit==1.62.0
+requests==2.34.2
+
 matplotlib
 dvc
 mlflow
