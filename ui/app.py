@@ -88,7 +88,7 @@ if submitted:
     else:
         # The API rejected the input
         st.warning(f"API rejected the request HTTP {r.status_code}")
-        st.json(r.json())
+        #st.json(r.json())
 
 
 

@@ -1,0 +1,18 @@
+{
+  "run_id": "9793628a811e42b5898adbec7fa9d34c",
+  "run_name": "run1_logreg_baseline",
+  "model_type": "logistic_regression",
+  "experiment_name": "amazon_review_sentiment",
+  "vocab_size": 5000,
+  "ngram_max": 1,
+  "max_features": 5000,
+  "metrics": {
+    "accuracy": 0.917,
+    "roc_auc": 0.942,
+    "f1_score": 0.5,
+    "precision": 0.906,
+    "recall": 0.345
+  },
+  "random_state": 42,
+  "trained_on": "data/raw/Amazon_Reviews_3500records.csv"
+}

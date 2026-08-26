@@ -25,10 +25,14 @@ class SentimentRequest(BaseModel):
         return v
 
 class SentimentResponse(BaseModel):
-    sentiment: str = Field(..., description="Sentiment")
+    sentiment: str = Field(..., description="'positive' or 'negative'")
     positive_probability: float = Field(..., ge=0.0, le=1.0)
-    confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence")
-    oov_rate: float = Field(..., ge=0.0, le=0.0, description="Oov_rate")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Distance from the decision boundary")
+    oov_rate: float = Field(..., ge=0.0, le=1.0, description="Share of words in this review"
+                           "that the model has never seen. A rising oov_rate is the "
+                            "earliest drift signal for a text model"
+
+                            )
     model_version: str
     latency_ms: float= Field(..., ge=0.0)
 

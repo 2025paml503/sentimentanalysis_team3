@@ -90,6 +90,7 @@ def predict_one(review_text, title):
     sentiment = "positive" if prob > 0.5 else "negative"
     confidence = abs(prob - 0.5)*2
     oov_rate = compute_oov_rate(clean_doc)
+    print(f"oov_Rate is {oov_rate}")
     latency_ms = (time.perf_counter() - start) * 1000
 
     return SentimentResponse(

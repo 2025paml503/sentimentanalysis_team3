@@ -57,3 +57,18 @@ Key Features:
     🔢 Class balance metrics identify potential imbalance issues
     📝 Pre-trained patterns check for non-ASCII encoding problems
     ✨ Production-ready with proper error handling and logging
+
+### Feature store
+    python features/build_features.py
+
+### Model training
+    python training/train_with_mlflow.py
+
+###MLflow UI command
+    mlflow ui --backend-store-uri sqlite:///mlflow.db
+
+###To run an application, use below command
+    uvicorn serving.api:app --port 8000
+
+### Streamlit ui
+    streamlit run ui/app.py
