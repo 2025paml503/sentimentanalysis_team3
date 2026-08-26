@@ -1,0 +1,36 @@
+======================================================================
+DATA VALIDATION REPORT
+======================================================================
+
+DATASET SUMMARY
+----------------------------------------------------------------------
+Total Records: 1000
+Total Columns: 2
+Memory Usage: 0.11 MB
+Columns: review, label
+
+DATA TYPES
+----------------------------------------------------------------------
+  review: object
+  label: int64
+
+VALIDATION RESULTS
+----------------------------------------------------------------------
+⚠️  DUPLICATE RECORDS: 10 (1.00%)
+
+
+OVERALL STATUS
+----------------------------------------------------------------------
+✅ PASSED
+⚠️  Data quality issues detected - review recommended
+
+RECOMMENDATIONS
+----------------------------------------------------------------------
+1. Address any schema violations before proceeding
+2. Review records with missing values
+3. Decide on duplicate handling strategy (remove, keep, merge)
+4. Examine outliers - may be legitimate edge cases or errors
+5. Consider class rebalancing if imbalance is extreme
+6. Re-run validation after any data cleaning
+
+======================================================================
