@@ -136,7 +136,7 @@ def save_to_feature_store(df):
 
 def load_from_feature_store():
     conn = sqlite3.connect(FEATURE_STORE_DB)
-    df = pd.read_sql_table(TABLE_NAME, conn)
+    df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", conn)
     conn.close()
     return df
  

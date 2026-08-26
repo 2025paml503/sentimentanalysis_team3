@@ -48,9 +48,9 @@ EXPERIMENT_NAME = "amazon_review_sentiment"
 
 TRACKING_URI = "sqlite:///mlflow.db"
 
-FEATURE_STORE_DB = "feature_store/feature_store.db"
+FEATURE_STORE_DB = "../feature_store/feature_store.db"
 TABLE_NAME = "review_features"
-MODEL_DIR = "model_store"
+MODEL_DIR = "../model_store"
 RANDOM_SEED = 42
 TEST_SIZE = 0.2
 
@@ -85,7 +85,7 @@ EXPERIMENTS = [
     {
         "run_name": "run4_naive_bayes",
         "model_type": "multinomial_nb",
-        "C": 1.0,
+        "alpha": 1.0,
         "ngram_max": 2,
         "max_features": 20000,
         "min_df": 2,
@@ -95,7 +95,7 @@ EXPERIMENTS = [
 def load_features():
     """ Read the versioned feature snapshot. Never the raw CSV"""
     conn = sqlite3.connect(FEATURE_STORE_DB)
-    df = pd.read_sql_table(TABLE_NAME, conn)
+    df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", conn)
     conn.close()
     return df
 
@@ -139,6 +139,7 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
                 random_state=RANDOM_SEED,
             )
         elif config["model_type"] == "multinomial_nb":
+           # print("DEBUG config:", config)
             model = MultinomialNB(alpha=config["alpha"])
         else:
             raise ValueError(f"Unknown model type: {config['model_type']}")
@@ -177,7 +178,7 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
         result["_vectorizer"] = vectorizer
         return result
 
-    def save_best_artifacts(best):
+def save_best_artifacts(best):
         """
         Freeze the winning run as the immutable deployment unit.
 
@@ -186,7 +187,7 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
             tfidf_vectorizer.pkl -- the vectorizer
             model_meta.json -- the lineage : which run produced this
         """
-        os.mkdir(MODEL_DIR, exist_ok=True)
+        os.makedirs(MODEL_DIR, exist_ok=True)
 
         joblib.dump(best["_model"], f"{MODEL_DIR}/sentiment_model.pkl")
         joblib.dump(best["_vectorizer"], f"{MODEL_DIR}/tfidf_vectorizer.pkl")
@@ -217,7 +218,7 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
         print(" tfidf_vectorizer.pkl -- the vectorizer")
         print(" model_meta.json -- the lineage : which run produced this")
 
-    if __name__ == "__main__":
+if __name__ == "__main__":
         print(" MLFlow tracked Experiments")
 
         mlflow.set_tracking_uri(TRACKING_URI)
