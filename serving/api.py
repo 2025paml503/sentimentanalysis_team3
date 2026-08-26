@@ -37,7 +37,7 @@ app = FastAPI(
 )
 
 model, vectorizer, meta = load_artifacts()
-MODEL_VERSION = meta["version"]
+MODEL_VERSION = meta["model_version"]
 VOCABULARY = vectorizer.vocabulary_
 
 init_db()

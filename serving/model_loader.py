@@ -3,7 +3,7 @@ from pathlib import Path
 
 MODEL_PATH = Path('model_store/sentiment_model.pkl')
 VECTORIZER_PATH = Path('model_store/tfidf_vectorizer.pkl')
-META_PATH = Path('model_store/model_meta.pkl')
+META_PATH = Path('model_store/model_meta.json')
 
 def load_artifacts():
 
