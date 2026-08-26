@@ -11,15 +11,24 @@ import pandas as pd
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_PATH = PROJECT_ROOT / "data" / "raw" / "amazon_reviews.txt"
+DATA_PATH = PROJECT_ROOT / "data" / "raw" / "Amazon_Reviews_3500records.csv"
 OUTPUT_PATH = PROJECT_ROOT / "eda_summary.txt"
 PLOT_PATH = PROJECT_ROOT / "sentiment_distribution.png"
 
 
 def load_reviews(path: Path) -> pd.DataFrame:
-    """Load the review dataset from a tab-separated text file."""
-    df = pd.read_csv(path, sep="\t", header=None, names=["review", "label"], encoding="utf-8")
-    return df
+    """Load the CSV review dataset using the columns expected by the EDA."""
+    df = pd.read_csv(path, encoding="utf-8")
+    required_columns = {"title", "review_text", "sentiment"}
+    missing_columns = required_columns.difference(df.columns)
+    if missing_columns:
+        raise ValueError(f"Dataset is missing required columns: {sorted(missing_columns)}")
+
+    title = df["title"].fillna("").astype(str)
+    review_text = df["review_text"].fillna("").astype(str)
+    df["review"] = (title + " " + review_text).str.strip()
+    df["label"] = df["sentiment"]
+    return df[["review", "label"]]
 
 
 def summarize_dataset(df: pd.DataFrame) -> pd.DataFrame:
