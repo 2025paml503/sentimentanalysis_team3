@@ -1,5 +1,5 @@
 """
-# features/build_features_old.py
+# feature/build_features.py
 =====================================
 Week 1 (Module M2) -- The Feature Engineering Pipeline
 
@@ -17,14 +17,14 @@ What runs where:
 
 clean_text() -> shared by training AND serving(this file)
 TF-IDF vectorizer -> FIT in training (on the train split only, to
-                    leakage), then saved as n artifact and LOADED by
-                    serving, So the fitted vocabulary is also shared
-                    --no skew.
+                     leakage), then saved as n artifact and LOADED by
+                     serving, So the fitted vocabulary is also shared
+                     --no skew.
 
 Outputs the offline feature store: feature_store/feature_store.db
 
 Run:
-    python features/build_features_old.py
+    python feature/build_features.py
 """
 
  
@@ -32,9 +32,13 @@ import pandas as pd
 import sqlite3
 import os
 import re
- 
-RAW_DATA_PATH    = '../data/raw/Amazon_Reviews_3500records.csv'
-FEATURE_STORE_DB = '../feature_store/feature_store.db'
+from pathlib import Path
+
+# Get the project root directory (parent of this file's directory)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+RAW_DATA_PATH    = PROJECT_ROOT / 'data' / 'raw' / 'Amazon_Reviews_3500records.csv'
+FEATURE_STORE_DB = PROJECT_ROOT / 'feature_store' / 'feature_store.db'
 TABLE_NAME       = 'review_features'
 
 # -- Shared text cleaning (used by training and serving) ---
@@ -122,11 +126,11 @@ def build_feature_set(df):
         print(f"Dropped {dropped} reviews(s) that cleaned to empty text")
 
     return out
- 
- 
+  
+  
 # ─── Persist to Feature Store ────────────────────────────────
 def save_to_feature_store(df):
-    os.makedirs('feature_store', exist_ok=True)
+    os.makedirs(PROJECT_ROOT / 'feature_store', exist_ok=True)
     conn = sqlite3.connect(FEATURE_STORE_DB)
     # if_exists='replace': idempotent – safe to re-run
     df.to_sql(TABLE_NAME, conn, if_exists='replace', index=False)
@@ -139,15 +143,20 @@ def load_from_feature_store():
     df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", conn)
     conn.close()
     return df
- 
- 
+  
+  
 if __name__ == '__main__':
     print('Loading raw data...')
+    if not RAW_DATA_PATH.exists():
+        raise FileNotFoundError(f"Data file not found at: {RAW_DATA_PATH}")
+    
     raw_df = load_raw(RAW_DATA_PATH)
+    print(f'✅  Loaded {len(raw_df)} records from {RAW_DATA_PATH.name}')
  
     print('Building feature set...')
     features_df = build_feature_set(raw_df)
+    print(f'✅  Built feature set with {len(features_df)} records')
  
     print('Persisting to feature store...')
     save_to_feature_store(features_df)
-
+    print(f'✅  Feature store persisted to {FEATURE_STORE_DB}')
