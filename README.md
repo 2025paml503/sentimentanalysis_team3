@@ -59,7 +59,7 @@ Key Features:
     ✨ Production-ready with proper error handling and logging
 
 ### Feature store
-    python features/build_features.py
+    python feature/build_features.py
 
 ### Model training
     python training/train_with_mlflow.py
