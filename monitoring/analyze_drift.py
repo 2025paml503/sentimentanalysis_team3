@@ -36,8 +36,6 @@ import sys
 import joblib
 import pandas as pd
 
-from serving.model_loader import VECTORIZER_PATH
-
 FEATURE_STORE_DB = "feature_store/feature_store.db"
 PREDICTION_DB = "prediction_logs/predictions.db"
 VECTORIZER_PATH = "model_store/tfidf_vectorizer.pkl"
@@ -49,7 +47,7 @@ CONFIDENCE_FLOOR  = 0.50        # mean confidence below this is worrying
 def load_training_baseline():
     """ Training-side statistics, computed from the immutable feature store """
     conn = sqlite3.connect(FEATURE_STORE_DB)
-    df = pd.read_sql("select * from feature_store", conn)
+    df = pd.read_sql("select * from review_features", conn)
     conn.close()
 
     # Baseline OOV: score the training documents against the deployed
