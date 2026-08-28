@@ -1,0 +1,5 @@
+outs:
+- md5: f5dd6ebf5d4c86c7bb7ac0307c2294e2
+  size: 1983287
+  hash: md5
+  path: Amazon_Reviews_3500records.csv
