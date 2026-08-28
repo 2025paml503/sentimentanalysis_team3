@@ -1,0 +1,23 @@
+artifact_path: file:C:/deep/ws/machine_learning/bit_pilani/sentiment_analysis/mlruns/1/models/m-291a163a45b1469db15442ff32273d9f/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.13.11
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+mlflow_version: 3.15.1
+model_id: m-291a163a45b1469db15442ff32273d9f
+model_size_bytes: 49083
+model_uuid: m-291a163a45b1469db15442ff32273d9f
+prompts: null
+run_id: 3a8f22097a204364a471e2d74779af3f
+utc_time_created: '2026-08-28 10:23:01.502304'
