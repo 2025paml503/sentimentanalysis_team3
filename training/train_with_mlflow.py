@@ -40,7 +40,7 @@ from sklearn.metrics import (accuracy_score, f1_score, precision_score
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 
-from feature.build_features import FEATURE_STORE_DB
+#from feature.build_features import FEATURE_STORE_DB
 
 sys.path.insert(0, os.getcwd())
 
@@ -48,7 +48,7 @@ EXPERIMENT_NAME = "amazon_review_sentiment"
 
 TRACKING_URI = "sqlite:///mlflow.db"
 
-FEATURE_STORE_DB = "../feature_store/feature_store.db"
+FEATURE_STORE_DB = "feature_store/feature_store.db"
 TABLE_NAME = "review_features"
 MODEL_DIR = "../model_store"
 RANDOM_SEED = 42
