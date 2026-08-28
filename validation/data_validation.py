@@ -46,7 +46,8 @@ CSV_SCHEMA = DataFrameSchema(
             dtype="object",  # Can be string or int
             checks=[
                 Check(lambda s: s.notna().all(), error="review_id cannot be null"),
-                Check(lambda s: s.str.len() > 0, error="review_id must not be empty"),
+                # Cast to string first to safely use string accessor (handles ints)
+                Check(lambda s: s.astype(str).str.len() > 0, error="review_id must not be empty"),
             ],
             required=True,
         ),
