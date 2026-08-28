@@ -72,3 +72,6 @@ Key Features:
 
 ### Streamlit ui
     streamlit run ui/app.py
+
+### drift analyzer
+    python monitoring/analyze_drift.py 
