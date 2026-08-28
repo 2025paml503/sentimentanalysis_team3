@@ -75,3 +75,9 @@ Key Features:
 
 ### drift analyzer
     python monitoring/analyze_drift.py 
+
+### prediction logs viewer
+    python tools/read_prediction_logs.py                # last 10 rows
+    python tools/read_prediction_logs.py --limit 25     # last 25 rows
+    python tools/read_prediction_logs.py --batch drifted # filter by traffic_batch
+    python tools/read_prediction_logs.py --summary      # counts + average only
