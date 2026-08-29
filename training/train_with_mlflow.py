@@ -50,7 +50,7 @@ TRACKING_URI = "sqlite:///mlflow.db"
 
 FEATURE_STORE_DB = "feature_store/feature_store.db"
 TABLE_NAME = "review_features"
-MODEL_DIR = "../model_store"
+MODEL_DIR = "./model_store"
 RANDOM_SEED = 42
 TEST_SIZE = 0.2
 
@@ -105,8 +105,15 @@ def log_sklearn_model(model, name):
     except TypeError:
         mlflow.sklearn.log_model(model, artifact_path=name)
 
-def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
-    """ Train + evaluate + track one configuration. Returns a result dict."""
+from sklearn.pipeline import Pipeline
+
+
+def run_one_experiment(config, X_train_text, X_test_text, y_train, y_test):
+    """ Train + evaluate + track one configuration using a sklearn Pipeline.
+
+    The pipeline ensures preprocessing (TF-IDF) and the classifier are fit
+    together and can be logged/serialized as a single artifact for serving.
+    """
     print(f"\n---{config['run_name']}---")
 
     with mlflow.start_run(run_name=config["run_name"]):
@@ -118,38 +125,55 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
         mlflow.set_tag("dataset", "amazon_review_sentiment")
         mlflow.set_tag("feature_source", "feature_store/review_features")
 
-        # TF-IDF : fit on TRAIN ONLY
-        vectorizer = TfidfVectorizer(
+        # Build TF-IDF vectorizer configured from the experiment grid
+        tfidf = TfidfVectorizer(
             ngram_range=(1, config["ngram_max"]),
             max_features=config["max_features"],
             min_df=config["min_df"],
             sublinear_tf=True,
         )
-        X_train = vectorizer.fit_transform(X_train_text)
-        X_test = vectorizer.transform(X_test_text)
-        vocab_size = len(vectorizer.vocabulary_)
-        mlflow.log_metric("vocab_size", vocab_size)
-        print(f" TF-IDF vocabulary: {vocab_size} terms")
 
-        # --- Train ---
+        # Choose classifier
         if config["model_type"] == "logistic_regression":
-            model = LogisticRegression(
+            clf = LogisticRegression(
                 C=config["C"],
                 max_iter=1000,
                 random_state=RANDOM_SEED,
                 class_weight="balanced",
             )
         elif config["model_type"] == "multinomial_nb":
-           # print("DEBUG config:", config)
-            model = MultinomialNB(alpha=config["alpha"])
+            clf = MultinomialNB(alpha=config["alpha"])
         else:
             raise ValueError(f"Unknown model type: {config['model_type']}")
 
-        model.fit(X_train, y_train)
+        # Assemble pipeline: TF-IDF -> classifier
+        pipeline = Pipeline([
+            ("tfidf", tfidf),
+            ("clf", clf),
+        ])
 
-        #-- Evaluate ------------------
-        y_pred = model.predict(X_test)
-        y_prob = model.predict_proba(X_test)[:,1]
+        # Fit pipeline on TRAIN split only
+        pipeline.fit(X_train_text, y_train)
+
+        # Vocabulary size (for reporting)
+        vocab_size = len(pipeline.named_steps["tfidf"].vocabulary_)
+        mlflow.log_metric("vocab_size", vocab_size)
+        print(f" TF-IDF vocabulary: {vocab_size} terms")
+
+        # Predictions and metrics
+        y_pred = pipeline.predict(X_test_text)
+        # Some classifiers (e.g., LogisticRegression, MultinomialNB) implement predict_proba
+        if hasattr(pipeline.named_steps["clf"], "predict_proba"):
+            y_prob = pipeline.predict_proba(X_test_text)[:, 1]
+        else:
+            # Fallback: use decision_function if available and normalize to [0,1]
+            if hasattr(pipeline.named_steps["clf"], "decision_function"):
+                scores = pipeline.decision_function(X_test_text)
+                # simple min-max normalization (not probabilistic)
+                y_prob = (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
+            else:
+                # If no probability-like output, use predictions as 0/1 probabilities
+                y_prob = y_pred
 
         metrics = {
             "accuracy": accuracy_score(y_test, y_pred),
@@ -165,8 +189,11 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
         print(f" roc_auc : {metrics['roc_auc']:.4f}")
         print(f" f1_score: {metrics['f1_score']:.4f}")
 
-        # ---- Log artifacts ----------
-        log_sklearn_model(model, "model")
+        # ---- Log artifacts: log the whole pipeline so serving can reuse exact preprocessing
+        try:
+            mlflow.sklearn.log_model(pipeline, name="model_pipeline")
+        except TypeError:
+            mlflow.sklearn.log_model(pipeline, "model_pipeline")
 
         run_id = mlflow.active_run().info.run_id
         print(f"run_id: {run_id}")
@@ -175,23 +202,30 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
         result.update(metrics)
         result["run_id"] = run_id
         result["vocab_size"] = vocab_size
-        result["_model"] = model
-        result["_vectorizer"] = vectorizer
+        result["_pipeline"] = pipeline
+        # keep compatibility keys
+        result["_model"] = pipeline.named_steps["clf"]
+        result["_vectorizer"] = pipeline.named_steps["tfidf"]
         return result
 
 def save_best_artifacts(best):
         """
         Freeze the winning run as the immutable deployment unit.
 
-        Three files, because a text model needs all three to serve  correctly:
-            sentiment_model.pkl -- the classifier
-            tfidf_vectorizer.pkl -- the vectorizer
-            model_meta.json -- the lineage : which run produced this
+        Prefer saving a single serialized pipeline (preprocessing + model) for
+        serving. Keep older separate artifacts for compatibility when available.
         """
         os.makedirs(MODEL_DIR, exist_ok=True)
 
-        joblib.dump(best["_model"], f"{MODEL_DIR}/sentiment_model.pkl")
-        joblib.dump(best["_vectorizer"], f"{MODEL_DIR}/tfidf_vectorizer.pkl")
+        # If pipeline is available, save it as the canonical artifact
+        if "_pipeline" in best:
+            joblib.dump(best["_pipeline"], f"{MODEL_DIR}/sentiment_pipeline.pkl")
+            print(f" Saved pipeline to {MODEL_DIR}/sentiment_pipeline.pkl")
+        else:
+            # Fallback: save model and vectorizer separately
+            joblib.dump(best["_model"], f"{MODEL_DIR}/sentiment_model.pkl")
+            joblib.dump(best["_vectorizer"], f"{MODEL_DIR}/tfidf_vectorizer.pkl")
+            print(f" Saved model + vectorizer to {MODEL_DIR}/")
 
         meta = {
             "run_id": best["run_id"],
@@ -199,8 +233,8 @@ def save_best_artifacts(best):
             "model_type": best["model_type"],
             "experiment_name": EXPERIMENT_NAME,
             "vocab_size": best["vocab_size"],
-            "ngram_max": best["ngram_max"],
-            "max_features": best["max_features"],
+            "ngram_max": best.get("ngram_max"),
+            "max_features": best.get("max_features"),
             "metrics": {
                 "accuracy": round(best["accuracy"], 3),
                 "roc_auc": round(best["roc_auc"], 3),
@@ -215,8 +249,11 @@ def save_best_artifacts(best):
             json.dump(meta, f, indent=2)
 
         print(f"\n Frozen deployment artifacts in {MODEL_DIR}/:")
-        print(" sentiment_model.pkl -- the classifier")
-        print(" tfidf_vectorizer.pkl -- the vectorizer")
+        if "_pipeline" in best:
+            print(" sentiment_pipeline.pkl -- the serialized preprocessing+model pipeline")
+        else:
+            print(" sentiment_model.pkl -- the classifier")
+            print(" tfidf_vectorizer.pkl -- the vectorizer")
         print(" model_meta.json -- the lineage : which run produced this")
 
 if __name__ == "__main__":

@@ -37,8 +37,10 @@ app = FastAPI(
 )
 
 model, vectorizer, meta = load_artifacts()
-MODEL_VERSION = meta["model_version"]
-VOCABULARY = vectorizer.vocabulary_
+# model_version may be called 'model_version' or we can fall back to the run_id
+MODEL_VERSION = meta.get("model_version") or meta.get("run_id") or "unknown"
+# vectorizer should expose a vocabulary_ attribute
+VOCABULARY = getattr(vectorizer, "vocabulary_", {})
 
 init_db()
 
