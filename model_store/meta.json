@@ -1,7 +1,8 @@
 {
-  "run_id": "9793628a811e42b5898adbec7fa9d34c",
+  "run_id": "76de2d0480284e05b15d592e0f5e0c04",
   "run_name": "run1_logreg_baseline",
   "model_type": "logistic_regression",
+  "model_version": "week3-v1",
   "experiment_name": "amazon_review_sentiment",
   "vocab_size": 5000,
   "ngram_max": 1,
