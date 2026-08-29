@@ -1,0 +1,69 @@
+<mxfile host="app.diagrams.net" agent="copilot-cli">
+  <diagram id="component-diagram-fixed" name="Component Diagram">
+    <mxGraphModel dx="1857" dy="623" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="76M-XbNb4cVyujfb_HnM-2" edge="1" parent="1" source="validation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="76M-XbNb4cVyujfb_HnM-1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="validation" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#FF8C00;strokeWidth=2;" value="Data Validation&lt;div&gt;(validation/)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="180" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="training" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#8E44AD;strokeWidth=2;" value="Training &amp;amp; Experiments&lt;div&gt;(training/, MLflow)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="240" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="ui" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0DCAF0;strokeWidth=2;" value="UI (Streamlit)&lt;div&gt;(ui/)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="460" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="serving" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#DC3545;strokeWidth=2;" value="Serving / API&lt;div&gt;(FastAPI / Uvicorn)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="200" x="460" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="monitor" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#20C997;strokeWidth=2;horizontal=0;" value="Monitoring / Drift&lt;div&gt;(monitoring/)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="290" width="60" x="710" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="notes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e6;strokeColor=#b07d01;strokeWidth=1;fontSize=11;align=center;" value="&lt;b&gt;Notes&lt;/b&gt;:&lt;div&gt;*&amp;nbsp;Dataset is versioned using &lt;b&gt;DVC&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;* &lt;/b&gt;Data Valitaion is done to identify data quality issue&lt;/div&gt;&lt;div&gt;* Feature pipeline is used to avoid data leakage&lt;/div&gt;&lt;div&gt;* &lt;b&gt;SQLite &lt;/b&gt;is used as Feature Store&lt;/div&gt;&lt;div&gt;* All experiments are captured in &lt;b&gt;MLFlow &lt;/b&gt;and used to compare metrics.&lt;/div&gt;&lt;div&gt;* Model is served in Rest endpoint using &lt;b&gt;FastAPI&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;*&amp;nbsp;Streamlit&amp;nbsp;&lt;/b&gt;is used for UI.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="200" width="260" x="-50" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="76M-XbNb4cVyujfb_HnM-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#444444;exitX=0.938;exitY=0.571;exitDx=0;exitDy=0;exitPerimeter=0;" target="validation">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-20" y="70" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#444444;" target="training">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="210" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="76M-XbNb4cVyujfb_HnM-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#444444;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="serving">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="420" y="180" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="training" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#444444;endArrow=block;" target="serving">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="serving" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#444444;endArrow=block;" target="monitor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="serving" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#444444;" target="ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="76M-XbNb4cVyujfb_HnM-3" edge="1" parent="1" source="76M-XbNb4cVyujfb_HnM-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="76M-XbNb4cVyujfb_HnM-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#34A853;strokeWidth=2;" value="Feature Engineering&lt;div&gt;(feature/)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="180" x="240" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="76M-XbNb4cVyujfb_HnM-4" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10.4000244140625;strokeColor=light-dark(#2B7CE9,#EDEDED);strokeWidth=2;" value="Feature Store&lt;div&gt;(SQLite)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="120" x="270" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="76M-XbNb4cVyujfb_HnM-5" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Files.svg;" value="Raw Data&lt;div&gt;/data/raw&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="64" x="-100" y="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
