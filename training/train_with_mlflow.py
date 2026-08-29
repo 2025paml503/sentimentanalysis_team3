@@ -137,6 +137,7 @@ def run_one_experiment(config, X_train_text,X_test_text, y_train, y_test):
                 C=config["C"],
                 max_iter=1000,
                 random_state=RANDOM_SEED,
+                class_weight="balanced",
             )
         elif config["model_type"] == "multinomial_nb":
            # print("DEBUG config:", config)
@@ -271,7 +272,7 @@ if __name__ == "__main__":
 
         best = max(results, key=lambda r: r["roc_auc"])
         print(f"\n Best run by ROC-AUC: {best['run_name']} "
-              f"(roc_auc={best['roc_auc']:.4f}, run_id = best['run_id'])")
+              f"(roc_auc={best['roc_auc']:.4f}, run_id={best['run_id']})")
 
         save_best_artifacts(best)
 
