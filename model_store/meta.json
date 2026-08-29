@@ -1,18 +1,18 @@
 {
-  "run_id": "76de2d0480284e05b15d592e0f5e0c04",
+  "run_id": "ccfae39e3d5d4a74bb565ab345ff4caa",
   "run_name": "run1_logreg_baseline",
   "model_type": "logistic_regression",
-  "model_version": "week3-v1",
+  "model_version": "3.0.0",
   "experiment_name": "amazon_review_sentiment",
   "vocab_size": 5000,
   "ngram_max": 1,
   "max_features": 5000,
   "metrics": {
-    "accuracy": 0.917,
-    "roc_auc": 0.942,
-    "f1_score": 0.5,
-    "precision": 0.906,
-    "recall": 0.345
+    "accuracy": 0.939,
+    "roc_auc": 0.945,
+    "f1_score": 0.746,
+    "precision": 0.741,
+    "recall": 0.75
   },
   "random_state": 42,
   "trained_on": "data/raw/Amazon_Reviews_3500records.csv"
