@@ -45,7 +45,7 @@ from sklearn.naive_bayes import MultinomialNB
 sys.path.insert(0, os.getcwd())
 
 EXPERIMENT_NAME = "amazon_review_sentiment"
-
+MODEL_VER = "3.0.0"
 TRACKING_URI = "sqlite:///mlflow.db"
 
 FEATURE_STORE_DB = "feature_store/feature_store.db"
@@ -231,6 +231,7 @@ def save_best_artifacts(best):
             "run_id": best["run_id"],
             "run_name": best["run_name"],
             "model_type": best["model_type"],
+            "model_version": MODEL_VER,
             "experiment_name": EXPERIMENT_NAME,
             "vocab_size": best["vocab_size"],
             "ngram_max": best.get("ngram_max"),
